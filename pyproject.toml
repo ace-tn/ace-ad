@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "acead"
+version = "0.0.1"
+description = "Experimental AD module of Ace-TN."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+
+authors = [{ name = "Addison Richards", email = "adsrichards0@gmail.com" }]
+
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "tqdm",
+    "toml",
+    "scipy",
+    "acetn",
+]
+
+[tool.setuptools.packages]
+find = { where = ["."] }
+

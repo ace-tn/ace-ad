@@ -8,7 +8,7 @@ class SiteTensor():
         self.dtype = dtype
         self.device = device
 
-        self.initialize_site_tensor(site_state, noise=1e-1)
+        self.initialize_site_tensor(init_tensor=init_tensor, site_state=site_state, noise=1e-2)
         self['C'] = self.initialize_corner_tensors()
         self['E'] = self.initialize_edge_tensors()
 
@@ -32,7 +32,7 @@ class SiteTensor():
         else:
             raise ValueError(f"Invalid key: '{key}' provided.")
 
-    def initialize_site_tensor(self, site_state=[1.,], noise=0.0):
+    def initialize_site_tensor(self, init_tensor=None, site_state=[1.,], noise=0.0):
         """
         Initializes the site tensor with a given state and optional noise.
 
@@ -43,12 +43,15 @@ class SiteTensor():
             site_state (list, optional): A list specifying the initial state for the site tensor (default is [1.]).
             noise (float, optional): The amount of noise to add to the site tensor (default is 0.0).
         """
-        pD = self.dims['phys']
-        bD = self.dims['bond']
-        self['A'] = noise*torch.rand(bD,bD,bD,bD,pD, dtype=self.dtype, device=self.device)
-        for n in range(len(site_state)):
-            self['A'][0,0,0,0,n] += site_state[n]
-        self['A'] = self['A']/self['A'].norm()
+        if init_tensor is None:
+            pD = self.dims['phys']
+            bD = self.dims['bond']
+            self['A'] = noise*torch.rand(bD,bD,bD,bD,pD, dtype=self.dtype, device=self.device)
+            for n in range(len(site_state)):
+                self['A'][0,0,0,0,n] += site_state[n]
+            self['A'] = self['A']/self['A'].norm()
+        else:
+            self['A'] = init_tensor.requires_grad_(True)
 
     @staticmethod
     def bond_permutation(k):
@@ -78,6 +81,8 @@ class SiteTensor():
             ck = ck.reshape(bD**2,bD**2)
             ck = ck / ck.norm()
             init_corner_tensors.append(ck)
+            #print('init_corner_tensors',init_corner_tensors)
+        self['C'] = init_corner_tensors
         return init_corner_tensors
 
     def initialize_edge_tensors(self):
@@ -90,4 +95,5 @@ class SiteTensor():
             ek = ek.reshape(bD**2,bD,bD,bD**2)
             ek = ek / ek.norm()
             init_edge_tensors.append(ek)
+        self['E'] = init_edge_tensors
         return init_edge_tensors

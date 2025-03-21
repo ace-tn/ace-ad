@@ -90,7 +90,11 @@ class TensorNetwork:
             filename (str): The name of the file to load the tensor network from.
         """
         state_dict = torch.load(filename, weights_only=False)
-        self._tensor_network = state_dict['tensors']
+        for site in self.site_list:
+            self[site] = SiteTensor(dims=self.dims, 
+                                    init_tensor=state_dict['tensors'][site]['A'], 
+                                    dtype=self.dtype, 
+                                    device=self.device)
         self.site_states_initialized = True
 
     def setup_tensor_network(self, tensor_network):
@@ -134,7 +138,7 @@ class TensorNetwork:
         self.site_list = self.build_site_list()
         for site in self.site_list:
             site_state = site_state_map(site)
-            self[site] = SiteTensor(self.dims, site_state=site_state, dtype=self.dtype, device=self.device)
+            self[site] = SiteTensor(dims=self.dims, site_state=site_state, dtype=self.dtype, device=self.device)
         self.site_states_initialized = True
 
     def build_bond_list(self):

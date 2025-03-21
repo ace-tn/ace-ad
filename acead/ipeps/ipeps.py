@@ -8,7 +8,7 @@ from acetn.ipeps.ipeps_config import TNConfig
 from .tensor_network import TensorNetwork
 
 class Ipeps(TensorNetwork,torch.nn.Module):
-    def __init__(self, ipeps_config, init_tensor=None):
+    def __init__(self, ipeps_config, ipeps=None):
         self.config      = ipeps_config
         self.dims        = ipeps_config.get('dims')
         self.ctmrg_steps = ipeps_config.get('ctmrg_steps')
@@ -16,7 +16,7 @@ class Ipeps(TensorNetwork,torch.nn.Module):
         dtype = ipeps_config.get('dtype')
         device = ipeps_config.get('device')
         tn_config = TNConfig(nx=2, ny=2, dims=ipeps_config.get('dims'))
-        TensorNetwork.__init__(self, None, tn_config, dtype, device)
+        TensorNetwork.__init__(self, ipeps, tn_config, dtype, device)
 
         torch.nn.Module.__init__(self)
         self.assign_parameters()

@@ -4,7 +4,8 @@ torch.set_default_dtype(torch.float64)
 from acead.ipeps import Ipeps
 
 def optimize_ipeps(ipeps_config, init_tensor=None):
-    ipeps = Ipeps(ipeps_config, init_tensor)
+    ipeps = Ipeps(ipeps_config)
+    ipeps.load("./saved_tensors/heisenberg_dims_3_16_dtau_001.pt")
     lbfgs_steps = ipeps_config.get('lbfgs_steps')
 
     def closure():
@@ -81,10 +82,10 @@ def optimize_ipeps(ipeps_config, init_tensor=None):
 if __name__=='__main__':
     dims = {}
     dims['phys'] = 2
-    dims['bond'] = 2
-    dims['chi'] = 20
+    dims['bond'] = 3
+    dims['chi'] = 16
 
-    ctmrg_steps = 5
+    ctmrg_steps = 2
     lbfgs_steps = 0
 
     ipeps_config = {
@@ -94,9 +95,9 @@ if __name__=='__main__':
         'ctmrg_steps': ctmrg_steps,
         'lbfgs_steps': lbfgs_steps,
         'model':{
-            'name': 'ising',
+            'name': 'heisenberg',
             'params':{
-                'jz': 1.0,
+                'J': 1.0,
                 'hx': 2.05,
             }
         },

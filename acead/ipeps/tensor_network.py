@@ -64,7 +64,7 @@ class TensorNetwork:
         self.site_list = tensor_network.site_list.copy()
         self.bond_list = tensor_network.bond_list.copy()
         for site in self.site_list:
-            self[site] = SiteTensor(self.dims, tensor_network[site], dtype=self.dtype, device=self.device)
+            self[site] = SiteTensor(self.dims, tensor_network[site]['A'], dtype=self.dtype, device=self.device)
 
     def save(self, prefix='ipeps'):
         """
